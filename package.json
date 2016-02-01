@@ -1,0 +1,18 @@
+{
+  "name": "Online-Chess-Game",
+  "version": "0.0.1",
+  "description": "This is an online chess game web application, implemented and designed by Tuan Nguyen for CS451 at Drexel University",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mtuan93/remote-chess-game"
+  },
+  "author": "Tuan Nguyen",
+  "bugs": {
+    "url": "https://github.com/mtuan93/remote-chess-game/issues"
+  },
+  "dependencies": {
+    "express": "^4.13.4",
+    "socket.io": "^1.4.5"
+  }
+}
