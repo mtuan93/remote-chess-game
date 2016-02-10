@@ -1,17 +1,28 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
     <meta name="viewport" content="width=410; user-scalable=no; minimal-ui">
     <title>Online Chess Game</title>
     <link rel="stylesheet" href="lib/chessboard-0.3.0.min.css">
     <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div id="board" style="width: 400px"></div>
+</head>
+
+<body>
+    <!-- <div id="board" style="width: 400px"></div> -->
+    <ul class="pages">
+        <li class="login page">
+            <div class="form">
+                <h3 class="title">Checkin your name</h3>
+                <input class="usernameInput" type="text" maxlength="14" />
+            </div>
+        </li>
+    </ul>
     <script src="lib/socket.io-1.2.0.js"></script>
     <script src="lib/jquery-1.11.1.js"></script>
-    <script src="lib/chess.min.js"></script> 
-    <script src="lib/chessboard-0.3.0.min.js"></script> 
+    <script src="lib/chess.min.js"></script>
+    <script src="lib/chessboard-0.3.0.min.js"></script>
     <script src="main.js"></script>
-  </body>
+</body>
+
 </html>
