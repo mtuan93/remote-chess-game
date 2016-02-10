@@ -1,4 +1,7 @@
 (function() {
+
+    var socket = io();
+    
     var board,
         game = new Chess();
 
