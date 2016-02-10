@@ -14,19 +14,23 @@ io.on('connection', function(socket) {
     var addedUser = false;
     console.log('a user connected');
     socket.on('add user', function(username) {
-        if (addedUser) return;
+        //if (addedUser) return;
 
         // we store the username in the socket session for this client
         socket.username = username;
         ++numUsers;
         addedUser = true;
-        console.log('useradded ' + username);
+        console.log('user added ' + username);
+
+        // echo globally (all clients) that a person has connected
+
         socket.emit('login', {
+            username: socket.username,
             numUsers: numUsers
         });
-        // echo globally (all clients) that a person has connected
+
         socket.broadcast.emit('user joined', {
-            username: socket.username,
+            username: username,
             numUsers: numUsers
         });
     });

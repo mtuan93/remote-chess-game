@@ -2,11 +2,12 @@
 
     //TODO: put this to a seperate file
     var socket = io();
-     var $loginPage = $('.login.page');
+    var $loginPage = $('.login.page');
     var $usernameInput = $('.usernameInput');
     var $window = $(window);
     var $currentInput = $usernameInput.focus();
     var username;
+    var $chatPage = $('.chat.page');
     $window.keydown(function(event) {
         // Auto-focus the current input when a key is typed
         if (!(event.ctrlKey || event.metaKey || event.altKey)) {
@@ -30,7 +31,7 @@
         // If the username is valid
         if (username) {
             $loginPage.fadeOut();
-            //$chatPage.show();
+            $chatPage.show();
             $loginPage.off('click');
             //$currentInput = $inputMessage.focus();
 
@@ -38,6 +39,19 @@
             socket.emit('add user', username);
         }
     }
+
+    socket.on('user joined', function(data) {
+        $('.chat.page').append(data);
+        //addParticipantsMessage(data);
+    });
+
+    socket.on('login', function(data) {
+        console.log(data);
+        console.log(data.username + ' joined');
+        console.log(data.numUsers + '  user');
+        $('#header').append(' ' + data.username);
+    });
+
 
     // Prevents input from having injected markup
     function cleanInput(input) {
