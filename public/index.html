@@ -3,23 +3,31 @@
 
 <head>
     <meta name="viewport" content="width=410; user-scalable=no; minimal-ui">
+    <link href='https://fonts.googleapis.com/css?family=Josefin+Slab' rel='stylesheet' type='text/css'>
     <title>Online Chess Game</title>
     <link rel="stylesheet" href="lib/chessboard-0.3.0.min.css">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-    <!-- <div id="board" style="width: 400px"></div> -->
-    <ul class="pages">
-        <li class="login page">
-            <div class="form">
-                <h3 class="title">Checkin your name</h3>
-                <input class="usernameInput" type="text" maxlength="14" />
-            </div>
-        </li>
-    </ul>
+  <div class="container">
+    <div class="header clearfix">
+      <h1>
+        Chessmasters
+      </h1>
+    </div>
+    <div class="jumbotron">
+        <form class="form-signin" name="checkinForm">
+          <h2>Please Check-in Your Name</h2>
+          <input type="name" id="username" class="center-block form-control" placeholder="Your Name" required>
+          <button class="btn btn-primary" id='login'>Checkin</button>
+        </form>
+      </div>
+  </div>
     <script src="lib/socket.io-1.2.0.js"></script>
     <script src="lib/jquery-1.11.1.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="lib/chess.min.js"></script>
     <script src="lib/chessboard-0.3.0.min.js"></script>
     <script src="main.js"></script>
