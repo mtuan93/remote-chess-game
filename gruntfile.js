@@ -2,6 +2,16 @@ module.exports = function(grunt) {
  
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+
+        coveralls: {
+            options: {
+                debug: true,
+                coverageDir: 'tests/coverage/PhantomJS/',
+                dryRun: true,
+                force: true,
+                recursive: true
+            }
+        },
  
         karma: {
             unit: {
@@ -11,5 +21,8 @@ module.exports = function(grunt) {
     });
  
     grunt.loadNpmTasks('grunt-karma');
-    grunt.registerTask('default', ['karma']);
+    grunt.loadNpmTasks('grunt-karma-coveralls');
+
+    grunt.registerTask('default', ['karma', 'coveralls']);
+
 };

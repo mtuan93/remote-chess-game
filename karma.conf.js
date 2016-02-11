@@ -4,7 +4,18 @@ module.exports = function(config) {
         // base path, that will be used to resolve files and exclude
         basePath: '',
 
-        plugins : ['karma-jasmine', 'karma-phantomjs-launcher'],
+        plugins : ['karma-jasmine', 'karma-phantomjs-launcher', 'karma-coverage'],
+
+        reporters: ['progress', 'coverage'],
+        
+        preprocessors: {
+            "public/*.js": ['coverage']
+        },
+        
+        coverageReporter: {
+            type: "lcov",
+            dir: "tests/coverage/"
+        },
  
         // frameworks to use
         frameworks: ['jasmine'],
@@ -12,7 +23,7 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             {pattern: 'public/lib/*.js', included: false},
-            //{pattern: 'public/*.js', included: true},
+            {pattern: 'public/*.js', included: false},
             {pattern: 'tests/*Spec.js', included: true}
         ],
  
