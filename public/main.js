@@ -1,103 +1,128 @@
 (function() {
+    var socket, serverGame;
+    var username, playerColor;
+    var game, board;
+    var usersOnline = [];
+    var myGames = [];
+    socket = io();
 
-    //TODO: put this to a seperate file
-    var socket = io();
-    var $loginPage = $('.login.page');
-    var $usernameInput = $('.usernameInput');
-    var $window = $(window);
-    var $currentInput = $usernameInput.focus();
-    var username;
-    var $chatPage = $('.chat.page');
-    $window.keydown(function(event) {
-        // Auto-focus the current input when a key is typed
-        if (!(event.ctrlKey || event.metaKey || event.altKey)) {
-            $currentInput.focus();
-        }
-        // When the client hits ENTER on their keyboard
-        if (event.which === 13) {
-            if (username) {
-                sendMessage();
-                socket.emit('stop typing');
-                typing = false;
-            } else {
-                setUsername();
-            }
+    socket.on('login', function(msg) {
+        usersOnline = msg.users;
+        updateUserList();
+
+        myGames = msg.games;
+
+    });
+
+    socket.on('joinlobby', function(msg) {
+        addUser(msg);
+    });
+
+    socket.on('leavelobby', function(msg) {
+        removeUser(msg);
+    });
+
+    socket.on('gameadd', function(msg) {
+
+    });
+
+    socket.on('gameremove', function(msg) {
+
+    });
+
+    socket.on('joingame', function(msg) {
+        console.log("joined as game id: " + msg.game.id);
+        playerColor = msg.color;
+        initGame(msg.game);
+
+        $('#page-lobby').hide();
+        $('#page-game').show();
+
+    });
+
+    socket.on('move', function(msg) {
+        if (serverGame && msg.gameId === serverGame.id) {
+            game.move(msg.move);
+            board.position(game.fen());
         }
     });
 
-    function setUsername() {
-        username = cleanInput($usernameInput.val().trim());
 
-        // If the username is valid
-        if (username) {
-            $loginPage.fadeOut();
-            $chatPage.show();
-            $loginPage.off('click');
-            //$currentInput = $inputMessage.focus();
-
-            // Tell the server your username
-            socket.emit('add user', username);
-        }
-    }
-
-    socket.on('user joined', function(data) {
-        $('.chat.page').append(data);
-        //addParticipantsMessage(data);
+    socket.on('logout', function(msg) {
+        removeUser(msg.username);
     });
 
-    socket.on('login', function(data) {
-        console.log(data);
-        console.log(data.username + ' joined');
-        console.log(data.numUsers + '  user');
-        $('#header').append(' ' + data.username);
+    $('#login').on('click', function() {
+        username = $('#username').val();
+
+        if (username.length > 0) {
+            $('#userLabel').text('You are checked in as: ' + username);
+            socket.emit('login', username);
+            $('#page-login').hide();
+            $('#page-lobby').show();
+        }
     });
 
+    $('#game-undo').on('click', function() {
+        // socket.emit('login', username);
+        // $('#page-game').hide();
+        // $('#page-lobby').show();
+    });
 
-    // Prevents input from having injected markup
-    function cleanInput(input) {
-        return $('<div/>').text(input).text();
-    }
-
-    var board,
-        game = new Chess();
-
-    var removeGreySquares = function() {
-        $('#board .square-55d63').css('background', '');
-    };
-
-    var greySquare = function(square) {
-        var squareEl = $('#board .square-' + square);
-
-        var background = '#a9a9a9';
-        if (squareEl.hasClass('black-3c85d') === true) {
-            background = '#696969';
-        }
-
-        squareEl.css('background', background);
-    };
-
-    var onDragStart = function(source, piece) {
-        // do not pick up pieces if the game is over
-        // or if it's not that side's turn
-        if (game.game_over() === true ||
-            (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-            (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-            return false;
-        }
-    };
-
-    var onDrop = function(source, target) {
-        removeGreySquares();
-
-        // see if the move is legal
-        var move = game.move({
-            from: source,
-            to: target,
-            promotion: 'q' // NOTE: always promote to a queen for example simplicity
+    $('#game-resign').on('click', function() {
+        socket.emit('resign', {
+            userId: username,
+            gameId: serverGame.id
         });
 
-        // illegal move
-        if (move === null) return 'snapback';
+        $('#page-game').hide();
+        $('#page-lobby').show();
+    });
+
+    var addUser = function(userId) {
+        usersOnline.push(userId);
+        updateUserList();
+    };
+
+    var removeUser = function(userId) {
+        for (var i = 0; i < usersOnline.length; i++) {
+            if (usersOnline[i] === userId) {
+                usersOnline.splice(i, 1);
+            }
+        }
+        updateUserList();
+    };
+
+    var updateUserList = function() {
+        if (usersOnline.length > 0) {
+            document.getElementById('userList').innerHTML = '';
+            usersOnline.forEach(function(user) {
+                $('#userList').append($('<a href="#" class="row list-group-item">')
+                    .text(user)
+                    .on('click', function() {
+                        socket.emit('invite', user);
+                    }));
+            });
+        }
+    };
+
+    var initGame = function(serverGameState) {
+        serverGame = serverGameState;
+
+        var cfg = {
+            draggable: true,
+            showNotation: false,
+            orientation: playerColor,
+            position: serverGame.board ? serverGame.board : 'start',
+            onDragStart: onDragStart,
+            onDrop: onDrop,
+            onMouseoutSquare: onMouseoutSquare,
+            onMouseoverSquare: onMouseoverSquare,
+            onSnapEnd: onSnapEnd
+        };
+
+        game = serverGame.board ? new Chess(serverGame.board) : new Chess();
+        board = new ChessBoard('game-board', cfg);
     };
 
     var onMouseoverSquare = function(square, piece) {
@@ -119,22 +144,54 @@
         }
     };
 
+    var greySquare = function(square) {
+      var squareEl = $('#game-board .square-' + square);
+      
+      var background = '#a9a9a9';
+      if (squareEl.hasClass('black-3c85d') === true) {
+        background = '#696969';
+      }
+
+      squareEl.css('background', background);
+    };
+
     var onMouseoutSquare = function(square, piece) {
         removeGreySquares();
     };
 
+    var removeGreySquares = function() {
+      $('#game-board .square-55d63').css('background', '');
+    };
+
+    var onDragStart = function(source, piece, position, orientation) {
+        if (game.game_over() === true ||
+            (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+            (game.turn() === 'b' && piece.search(/^w/) !== -1) ||
+            (game.turn() !== playerColor[0])) {
+            return false;
+        }
+    };
+
+    var onDrop = function(source, target) {
+        var move = game.move({
+            from: source,
+            to: target,
+            promotion: 'q'
+        });
+
+        if (move === null) {
+            return 'snapback';
+        } else {
+            socket.emit('move', {
+                move: move,
+                gameId: serverGame.id,
+                board: game.fen()
+            });
+        }
+
+    };
     var onSnapEnd = function() {
         board.position(game.fen());
     };
 
-    var cfg = {
-        draggable: true,
-        position: 'start',
-        onDragStart: onDragStart,
-        onDrop: onDrop,
-        onMouseoutSquare: onMouseoutSquare,
-        onMouseoverSquare: onMouseoverSquare,
-        onSnapEnd: onSnapEnd
-    };
-    board = ChessBoard('board', cfg);
 })();
