@@ -1,69 +1,109 @@
-.highlight-white {
-  -webkit-box-shadow: inset 0 0 3px 3px yellow;
-  -moz-box-shadow: inset 0 0 3px 3px yellow;
-  box-shadow: inset 0 0 3px 3px yellow;  
-}
-.highlight-black {
-  -webkit-box-shadow: inset 0 0 3px 3px blue;
-  -moz-box-shadow: inset 0 0 3px 3px blue;
-  box-shadow: inset 0 0 3px 3px blue;  
-}
-
-/* Pages */
-
-.pages {
+/* Space out content a bit */
+html, body, .container {
   height: 100%;
-  margin: 0;
-  padding: 0;
-  width: 100%;
 }
 
-.page {
-  height: 100%;
-  position: absolute;
-  width: 100%;
+/* Everything but the jumbotron gets side spacing for mobile first views */
+.header {
+  padding-right: 15px;
+  padding-left: 15px;
 }
 
-/* Login Page */
-
-.login.page {
-  background-color: #000;
+/* Custom page header */
+.header {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e5e5e5;
+}
+/* Make the masthead heading the same height as the navigation */
+.header h1 {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 60px;
+  line-height: 1;
 }
 
-.login.page .form {
-  height: 100px;
-  margin-top: -100px;
-  position: absolute;
+body {
+  padding-top: 70px;
+  font-family: 'Josefin Slab', serif;
+  max-width: 2000px;
+}
+/* Customize container */
+@media (min-width: 768px) {
+  .container {
+    max-width: 730px;
+  }
+}
 
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+  /* Remove the padding we set earlier */
+  .header,
+  .footer {
+    padding-right: 0;
+    padding-left: 0;
+  }
+  /* Space out the masthead */
+  .header {
+    margin-bottom: 30px;
+  }
+  /* Remove the bottom border on the jumbotron for visual effect */
+  .jumbotron {
+    border-bottom: 0;
+  }
+}
+/* jumbotron styles */
+.jumbotron {
   text-align: center;
-  top: 50%;
-  width: 100%;
+  border-bottom: 1px solid #e5e5e5;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.jumbotron > .btn{
+  padding: 14px 24px;
+  font-size: 30px;
 }
 
-.login.page .form .usernameInput {
-  background-color: transparent;
-  border: none;
-  border-bottom: 2px solid #fff;
-  outline: none;
-  padding-bottom: 15px;
-  text-align: center;
-  width: 400px;
+/* form styles */
+.form-signin {
+  max-width: 500px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 30px;
 }
 
-.login.page .title {
-  font-size: 200%;
-}
-
-.login.page .usernameInput {
-  font-size: 200%;
-  letter-spacing: 3px;
-}
-
-.login.page .title, .login.page .usernameInput {
-  color: #fff;
-  font-weight: 100;
-}
 
 .chat.page {
   display: none;
+}
+
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="name"] {
+  max-width: 300px;
+  border-radius: 15px;
+}
+#login {
+  margin-top: 15px;
+  font-size: 30px;
+}
+
+/*For responsive background image*/
+/* Responsive Full Background Image Using CSS
+*/
+body {
+  /* Location of the image */
+  background-image: url("img/background.jpg");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-color:#464646;
 }
