@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         coveralls: {
             options: {
                 debug: true,
-                coverageDir: 'tests/coverage/PhantomJS/',
+                coverageDir: 'test/',
                 dryRun: true,
                 force: true,
                 recursive: true

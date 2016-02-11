@@ -21,8 +21,11 @@
     "grunt-karma-coveralls": "^2.5.4",
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.19",
+    "karma-coverage": "^0.5.3",
     "karma-jasmine": "^0.3.7",
     "karma-phantomjs-launcher": "^1.0.0",
-    "phantomjs-prebuilt": "^2.1.4"
+    "phantomjs-prebuilt": "^2.1.4",
+    "should": "^8.2.2",
+    "socket.io-client": "^1.4.5"
   }
 }
