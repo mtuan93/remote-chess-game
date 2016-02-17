@@ -1,11 +1,13 @@
 [![Build Status](https://travis-ci.org/mtuan93/remote-chess-game.svg?branch=master)](https://travis-ci.org/mtuan93/remote-chess-game)
-# remote-chess-game
+
+# Chessmasters
 This repository is for the final project in CS451 - Drexel University
+This project is to create an online real-time chess game.
 
 ### Setup
 
-1) Make sure you install NodeJS
+1) NodeJS is installed
 
-2) After cloning this project, run `npm install` to install express and socket.io 
+2) After clone the repository, run `npm install` to install all the dependencies
 
-3) Use node app.js to start the application
+3) To start the app, run `node app.js` and the app can be accessed through `localhost:3000`
