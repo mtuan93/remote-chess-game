@@ -20,5 +20,8 @@
   "devDependencies": {
     "should": "^8.2.2",
     "socket.io-client": "^1.4.5"
+  },
+  "scripts": {
+    "test": "istanbul cover mocha test/*"
   }
 }
