@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/mtuan93/remote-chess-game.svg?branch=master)](https://travis-ci.org/mtuan93/remote-chess-game)
 # remote-chess-game
 This repository is for the final project in CS451 - Drexel University
 
