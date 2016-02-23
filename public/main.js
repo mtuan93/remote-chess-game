@@ -4,7 +4,7 @@
     var game, board;
     var usersOnline = [];
     var myGames = [];
-    socket = io();
+    socket = io('http://localhost');
 
     socket.on('login', function(msg) {
         usersOnline = msg.users;
@@ -47,8 +47,12 @@
 
 
     socket.on('logout', function(msg) {
-        removeUser(msg.username);
+        removeUser(msg.userId);
     });
+
+    // $( window ).unload(function() {
+    //   return socket.emmit('offBrowser', username);
+    // });
 
     $('#login').on('click', function() {
         username = $('#username').val();

@@ -109,6 +109,11 @@ io.on('connection', function(socket) {
             gameId: socket.gameId
         });
     });
+    // socket.on('offBrowser', function(user) {
+    //     socket.broadcast.emit('logout', {
+    //         username: user
+    //     })
+    // });
     socket.on('dashboardlogin', function() {
         console.log('dashboard joined');
         socket.emit('dashboardlogin', {

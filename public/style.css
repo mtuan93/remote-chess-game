@@ -107,11 +107,7 @@ body {
   background-size: cover;
 }
 
-#page-lobby{
-  display: none;
-}
-
-#page-game, #player-turn {
+#page-lobby, #page-game{
   display: none;
 }
 
