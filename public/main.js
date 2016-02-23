@@ -1,6 +1,6 @@
 (function() {
     var socket, serverGame;
-    var username, playerColor;
+    var username, playerColor, currentTurnPlayer;
     var game, board;
     var usersOnline = [];
     var myGames = [];
@@ -34,10 +34,8 @@
         console.log("joined as game id: " + msg.game.id);
         playerColor = msg.color;
         initGame(msg.game);
-
         $('#page-lobby').hide();
         $('#page-game').show();
-
     });
 
     socket.on('move', function(msg) {
@@ -74,7 +72,6 @@
             userId: username,
             gameId: serverGame.id
         });
-
         $('#page-game').hide();
         $('#page-lobby').show();
     });

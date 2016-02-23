@@ -11,9 +11,9 @@ var options = {
 
 var userName = "Tuan";
 
-describe("Chess Server", function() {
+describe("Chess Checkin - ", function() {
     /* Test 1 - A Single User */
-    it('Should broadcast new user once they connect', function(done) {
+    it('Test to make sure the new user checkin successfully', function(done) {
         var client = io.connect(socketURL, options);
 
         client.on('connect', function(data) {
