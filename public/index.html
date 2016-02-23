@@ -1,42 +1,56 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
     <meta name="viewport" content="width=410; user-scalable=no; minimal-ui">
     <link href='https://fonts.googleapis.com/css?family=Josefin+Slab' rel='stylesheet' type='text/css'>
     <title>Online Chess Game</title>
     <link rel="stylesheet" href="lib/chessboard-0.3.0.min.css">
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
+</head>
+
+<body>
     <div class="container">
-      <div class="header clearfix">
-        <h1>
+        <div class="header clearfix">
+            <h1>
         Chessmasters
         </h1>
-      </div>
-      <div class="jumbotron">
-        <div class="form-signin" name="checkinForm" id='page-login'>
-          <h2><strong>Please Check-in Your Name</strong></h2>
-          <input type="name" id="username" class="center-block form-control" placeholder="Your Name" required>
-          <button class="btn btn-primary" id='login'>Checkin</button>
         </div>
-        <div class="page lobby" id='page-lobby'>
-          <h2 id='userLabel'></h2>
-          <h3>Online players: </h3>
-          <div id='userList' class="list-group">
-            No users online
-          </div>
-        </div>
-        <!-- <h2 id="player-turn"><strong><div class="label label-success">asdsa</div></strong></h2> -->
         <div class="page game" id='page-game'>
           <button class="btn btn-danger" id='game-resign'>Forfeit</button>
+        <div class="jumbotron">
+            <div class="form-signin" name="checkinForm" id='page-login'>
+                <h2><strong>Please Check-in Your Name</strong></h2>
+                <input type="name" id="username" class="center-block form-control" placeholder="Your Name" required>
+                <button class="btn btn-primary" id='login'>Checkin</button>
+            </div>
+            <div class="page lobby" id='page-lobby'>
+                <h2 id='userLabel'></h2>
+                <h3>Online players: </h3>
+                <div id='userList' class="list-group">
+                    No users online
+                </div>
+            </div>
+            <div class="page game" id='page-game'>
+                <button class="btn btn-primary" id='game-undo'>Undo</button>
+                <button class="btn btn-danger" id='game-resign'>Forfeit</button>
+                <div id="popup-element">
+                  <center>
+                    <a class="b-close">x</a>Do you want to undo?
+                      </br>
+                      </br>
+                      <button class="btn btn-primary" id='game-undo'>Accept</button>
+                      <button class="btn btn-danger" id='game-resign'>Decline</button>
+                  </center>
+                </div>
           <div id='game-board' style="width: 400px; margin: 0 auto"></div>
         </div>
       </div>
     </div>
     <script src="lib/socket.io-1.2.0.js"></script>
     <script src="lib/jquery-1.11.1.js"></script>
+    <script src="lib/jquery.bpopup.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="lib/chess.min.js"></script>
     <script src="lib/chessboard-0.3.0.min.js"></script>

@@ -61,10 +61,16 @@
         }
     });
 
-    $('#game-undo').on('click', function() {
+    $('#game-undo').on('click', function(e) {
         // socket.emit('login', username);
         // $('#page-game').hide();
         // $('#page-lobby').show();
+
+        // Prevents the default action to be triggered. 
+        e.preventDefault();
+
+        // Triggering bPopup when click event is fired
+        $('#popup-element').bPopup();
     });
 
     $('#game-resign').on('click', function() {
@@ -142,14 +148,14 @@
     };
 
     var greySquare = function(square) {
-      var squareEl = $('#game-board .square-' + square);
-      
-      var background = '#a9a9a9';
-      if (squareEl.hasClass('black-3c85d') === true) {
-        background = '#696969';
-      }
+        var squareEl = $('#game-board .square-' + square);
 
-      squareEl.css('background', background);
+        var background = '#a9a9a9';
+        if (squareEl.hasClass('black-3c85d') === true) {
+            background = '#696969';
+        }
+
+        squareEl.css('background', background);
     };
 
     var onMouseoutSquare = function(square, piece) {
@@ -157,7 +163,7 @@
     };
 
     var removeGreySquares = function() {
-      $('#game-board .square-55d63').css('background', '');
+        $('#game-board .square-55d63').css('background', '');
     };
 
     var onDragStart = function(source, piece, position, orientation) {
