@@ -15,10 +15,6 @@ var userName3 = 'name3';
 
 describe("Chess Checkin - ", function() {
     /* Test 1 - A Single User */
-<<<<<<< HEAD
-    it('Test to make sure the new user checkin successfully', function(done) {
-        var client = io.connect(socketURL, options);
-=======
     it('TEST: should broadcast users when new user connects', function(done) {
         // Set up two waiting users
         var client2 = io.connect(socketURL, options);
@@ -29,7 +25,6 @@ describe("Chess Checkin - ", function() {
         client3.on('connect', function(data) {
             client3.emit('login', userName3);
         });
->>>>>>> d0c3acbfe39418d9f66dba471f6477345badb720
 
         // Set up the new user
         var client1 = io.connect(socketURL, options);
