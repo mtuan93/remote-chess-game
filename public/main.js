@@ -65,25 +65,20 @@
         }
     });
 
-    $('#game-undo').on('click', function(e) {
-        // socket.emit('login', username);
-        // $('#page-game').hide();
-        // $('#page-lobby').show();
-
-        // Prevents the default action to be triggered. 
-        e.preventDefault();
-
-        // Triggering bPopup when click event is fired
-        $('#popup-element').bPopup();
-    });
-
     $('#game-resign').on('click', function() {
-        socket.emit('resign', {
-            userId: username,
-            gameId: serverGame.id
+        var bpopup = $('#popup-element-forfeit').bPopup();
+        $('#resign-accept').on('click', function() {
+            bpopup.close();
+            socket.emit('resign', {
+                userId: username,
+                gameId: serverGame.id
+            });
+            $('#page-game').hide();
+            $('#page-lobby').show();
         });
-        $('#page-game').hide();
-        $('#page-lobby').show();
+        $('#resign-decline').on('click', function() {
+            bpopup.close();
+        });
     });
 
     var addUser = function(userId) {

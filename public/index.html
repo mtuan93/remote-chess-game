@@ -31,11 +31,19 @@
                 </div>
             </div>
             <div class="page game" id='page-game'>
-                <button class="btn btn-primary" id='game-undo'>Undo</button>
                 <button class="btn btn-danger" id='game-resign'>Forfeit</button>
-                <div id="popup-element">
+                <div class="popup-element" id="popup-element-forfeit">
                   <center>
-                    <a class="b-close">x</a>Do you want to undo?
+                    <a class="b-close">x</a>Are you sure that you want to forfeit the game?
+                      </br>
+                      </br>
+                      <button class="btn btn-primary" id='resign-accept'>Accept</button>
+                      <button class="btn btn-danger" id='resign-decline'>Decline</button>
+                  </center>
+                </div>
+                <div class="popup-element" id="popup-element-request">
+                  <center>
+                    <a class="b-close">x</a><span id="sender"></span> wants to challenge you for a match!
                       </br>
                       </br>
                       <button class="btn btn-primary" id='game-undo'>Accept</button>

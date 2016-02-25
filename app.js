@@ -97,6 +97,10 @@ io.on('connection', function(socket) {
         activeGames[msg.gameId].board = msg.board;
         console.log(msg);
     });
+    socket.on('resign', function(userInfo) {
+        console.log("resign" + userInfo);
+        debugger;
+    });
     socket.on('disconnect', function(msg) {
         console.log(msg);
         if (socket && socket.userId && socket.gameId) {

@@ -121,7 +121,7 @@ body {
 }
 
 
-#popup-element { 
+.popup-element { 
     background-color:#fff;
     border-radius:15px;
     color:#000;
