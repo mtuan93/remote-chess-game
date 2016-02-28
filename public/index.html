@@ -31,6 +31,7 @@
                 </div>
             </div>
             <div class="page game" id='page-game'>
+                <h2></h2>
                 <button class="btn btn-danger" id='game-resign'>Forfeit</button>
                 <div class="popup-element" id="popup-element-forfeit">
                   <center>
@@ -50,6 +51,14 @@
                       <button class="btn btn-danger" id='game-resign'>Decline</button>
                   </center>
                 </div>
+                <div class="popup-element" id="popup-element-resign-received">
+                  <center>
+                    <a class="b-close">x</a><span id="game-resign-message"></span>
+                      </br>
+                      </br>
+                      <button class="btn btn-primary" id='game-resign-received-ok'>Ok</button>
+                  </center>
+                </div>
           <div id='game-board' style="width: 400px; margin: 0 auto"></div>
         </div>
       </div>
@@ -60,6 +69,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="lib/chess.min.js"></script>
     <script src="lib/chessboard-0.3.0.min.js"></script>
-    <script src="main.js"></script>
+    <script src="client.js"></script>
   </body>
 </html>

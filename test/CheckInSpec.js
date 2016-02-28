@@ -1,6 +1,6 @@
 var should = require('should');
 var io = require('socket.io-client'),
-    server = require('../app.js');
+    server = require('../server.js');
 
 var socketURL = 'http://localhost:3000/';
 

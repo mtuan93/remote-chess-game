@@ -56,11 +56,13 @@ io.on('connection', function(socket) {
         console.log('starting game: ' + game.id);
         lobbyUsers[game.users.white].emit('joingame', {
             game: game,
-            color: 'white'
+            color: 'white',
+            otherUser: game.users.black
         });
         lobbyUsers[game.users.black].emit('joingame', {
             game: game,
-            color: 'black'
+            color: 'black',
+            otherUser: game.users.white
         });
         delete lobbyUsers[game.users.white];
         delete lobbyUsers[game.users.black];
@@ -80,14 +82,16 @@ io.on('connection', function(socket) {
         if (lobbyUsers[game.users.white]) {
             lobbyUsers[game.users.white].emit('joingame', {
                 game: game,
-                color: 'white'
+                color: 'white',
+                otherUser: game.users.black
             });
             delete lobbyUsers[game.users.white];
         }
         if (lobbyUsers[game.users.black]) {
             lobbyUsers[game.users.black].emit('joingame', {
                 game: game,
-                color: 'black'
+                color: 'black',
+                otherUser: game.users.white
             });
             delete lobbyUsers[game.users.black];
         }
@@ -98,8 +102,17 @@ io.on('connection', function(socket) {
         console.log(msg);
     });
     socket.on('resign', function(userInfo) {
-        console.log("resign" + userInfo);
-        debugger;
+        console.log(userInfo.userId + " resign");
+        delete lobbyUsers[userInfo.userId];
+        socket.broadcast.emit('logout', {
+            userId: userInfo.userId,
+            gameId: userInfo.gameId
+        });
+        socket.broadcast.emit('resign', {
+            opponentId: userInfo.userId,
+            userId: userInfo.otherUser,
+            gameId: userInfo.gameId
+        });
     });
     socket.on('disconnect', function(msg) {
         console.log(msg);
@@ -113,11 +126,6 @@ io.on('connection', function(socket) {
             gameId: socket.gameId
         });
     });
-    // socket.on('offBrowser', function(user) {
-    //     socket.broadcast.emit('logout', {
-    //         username: user
-    //     })
-    // });
     socket.on('dashboardlogin', function() {
         console.log('dashboard joined');
         socket.emit('dashboardlogin', {
