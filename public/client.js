@@ -15,17 +15,11 @@
     });
 
     socket.on('resign', function(userInfo) {
-        console.log("catched resign " + userInfo.opponentId);
-        console.log("handle event resign for " + userInfo.userId);
         if(serverGame && userInfo.gameId === serverGame.id && username === userInfo.userId) {
-            var resignPopup = $('#popup-element-resign-received').bPopup({
-                onClose: function() {
-                    socket.emit('login', username);
-                    socket.emit('login', userInfo.opponentId);
-                    $('#page-game').hide();
-                    $('#page-lobby').show();
-                }
-            });
+            socket.emit('login', username);
+            $('#page-game').hide();
+            $('#page-lobby').show();
+            var resignPopup = $('#popup-element-resign-received').bPopup();
             $('#game-resign-message').text(userInfo.opponentId + ' has resigned the game, you won!');
             $('#game-resign-received-ok').on('click', function() {
                 resignPopup.close();
@@ -38,6 +32,7 @@
     });
 
     socket.on('leavelobby', function(msg) {
+        console.log(msg + ' leave lobby!');
         removeUser(msg);
     });
 
@@ -82,19 +77,20 @@
         }
     });
 
-    $('#game-resign').on('click', function() {
+    $('#game-resign').click(function() {
         var bpopup = $('#popup-element-forfeit').bPopup();
-        $('#resign-accept').on('click', function() {
+        $('#resign-accept').unbind().on('click', function() {
             bpopup.close();
             socket.emit('resign', {
                 userId: username,
                 gameId: serverGame.id,
                 otherUser: otherUser
             });
+            socket.emit('login', username);
             $('#page-game').hide();
             $('#page-lobby').show();
         });
-        $('#resign-decline').on('click', function() {
+        $('#resign-decline').unbind().on('click', function() {
             bpopup.close();
         });
     });
@@ -114,8 +110,8 @@
     };
 
     var updateUserList = function() {
+        document.getElementById('userList').innerHTML = 'No users online';
         if (usersOnline.length > 0) {
-            document.getElementById('userList').innerHTML = '';
             usersOnline.forEach(function(user) {
                 $('#userList').append($('<a href="#" class="row list-group-item">')
                     .text(user)

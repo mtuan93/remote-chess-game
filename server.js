@@ -28,6 +28,7 @@ io.on('connection', function(socket) {
                 console.log('gameid - ' + gameId);
             });
         }
+        console.log('lobby ' + Object.keys(lobbyUsers));
         socket.emit('login', {
             users: Object.keys(lobbyUsers),
             games: Object.keys(users[userId].games)
@@ -38,7 +39,6 @@ io.on('connection', function(socket) {
     });
     socket.on('invite', function(opponentId) {
         console.log('got an invite from: ' + socket.userId + ' --> ' + opponentId);
-
         socket.broadcast.emit('leavelobby', socket.userId);
         socket.broadcast.emit('leavelobby', opponentId);
         var game = {
@@ -66,7 +66,6 @@ io.on('connection', function(socket) {
         });
         delete lobbyUsers[game.users.white];
         delete lobbyUsers[game.users.black];
-
         socket.broadcast.emit('gameadd', {
             gameId: game.id,
             gameState: game
@@ -103,11 +102,10 @@ io.on('connection', function(socket) {
     });
     socket.on('resign', function(userInfo) {
         console.log(userInfo.userId + " resign");
+        delete users[userInfo.userId];
+        delete users[userInfo.otherUser];
         delete lobbyUsers[userInfo.userId];
-        socket.broadcast.emit('logout', {
-            userId: userInfo.userId,
-            gameId: userInfo.gameId
-        });
+        delete lobbyUsers[userInfo.otherUser];
         socket.broadcast.emit('resign', {
             opponentId: userInfo.userId,
             userId: userInfo.otherUser,
@@ -115,7 +113,6 @@ io.on('connection', function(socket) {
         });
     });
     socket.on('disconnect', function(msg) {
-        console.log(msg);
         if (socket && socket.userId && socket.gameId) {
             console.log(socket.userId + ' disconnected');
             console.log(socket.gameId + ' disconnected');
