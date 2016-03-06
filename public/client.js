@@ -38,8 +38,22 @@
             $('#request-decline').unbind().on('click', function() {
                 socket.emit('invite-decline', info);
                 bpopup.close();
+                socket.emit('login', info.userId);
             });
         }
+    });
+
+    socket.on('receive-invite-decline', function(opponentId) {
+        $('#popup-element-request').bPopup().close();
+        $('#popup-element-request-sent').bPopup().close();
+        socket.emit('login', username);
+        $('#page-game').hide();
+        $('#page-lobby').show();
+        var declinePopup = $('#popup-element-request-decline').bPopup();
+        $('#game-request-decline').text(opponentId + ' declined your request to play!');
+        $('#game-request-decline-ok').on('click', function() {
+            declinePopup.close();
+        });
     });
 
     socket.on('joinlobby', function(msg) {

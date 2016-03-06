@@ -77,6 +77,11 @@ io.on('connection', function(socket) {
             gameState: game
         });
     });
+    socket.on('invite-decline', function(info) {
+        lobbyUsers[info.sender].emit('receive-invite-decline', info.userId);
+        delete lobbyUsers[info.sender];
+        delete lobbyUsers[info.userId];
+    });
     socket.on('resumegame', function(gameId) {
         console.log('ready to resume game: ' + gameId);
         socket.gameId = gameId;
