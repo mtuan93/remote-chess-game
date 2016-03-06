@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/mtuan93/remote-chess-game.svg?branch=master)](https://travis-ci.org/mtuan93/remote-chess-game)
+[![Code Climate](https://codeclimate.com/github/mtuan93/remote-chess-game/badges/gpa.svg)](https://codeclimate.com/github/mtuan93/remote-chess-game)
 
 # Chessmasters
 This repository is for the final project in CS451 - Drexel University
