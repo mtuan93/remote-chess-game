@@ -66,14 +66,25 @@
         removeUser(msg.userId);
     });
 
+    socket.on('valid-username', function(isValid) {
+      if(isValid){
+        $('#userLabel').text('You are checked in as: ' + username);
+        socket.emit('login', username);
+        $('#page-login').hide();
+        $('#page-lobby').show();
+      } else {
+        var bpopup = $('#popup-element-duplicate-username').bPopup();
+        $('#popup-dup-ok').unbind().on('click', function() {
+          bpopup.close();
+        });
+      }
+    });
+
     $('#login').on('click', function() {
         username = $('#username').val();
 
         if (username.length > 0) {
-            $('#userLabel').text('You are checked in as: ' + username);
-            socket.emit('login', username);
-            $('#page-login').hide();
-            $('#page-lobby').show();
+          socket.emit('validate-username', username);
         }
     });
 
