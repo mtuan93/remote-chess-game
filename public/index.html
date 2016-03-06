@@ -7,7 +7,8 @@
     <title>Online Chess Game</title>
     <link rel="stylesheet" href="lib/chessboard-0.3.0.min.css">
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="flipclock.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -31,8 +32,13 @@
                 </div>
             </div>
             <div class="page game" id='page-game'>
-                <h2></h2>
-                <button class="btn btn-danger" id='game-resign'>Forfeit</button>
+                <h1>You are compete with <span id="opponent"></span></h1>
+                <h1>Current Turn: <span id="current-turn"></span></h1>
+                <h1>Number of Allowed Penalties Left: <span id="penalty"></span></h1>
+                <div class="row">
+                  <button class="btn btn-danger" id='game-resign'>Forfeit</button>
+                  <div class="clock" style="margin:2em;"></div>
+                </div>
                 <div class="popup-element" id="popup-element-forfeit">
                   <center>
                     <a class="b-close">x</a>Are you sure that you want to forfeit the game?
@@ -83,6 +89,7 @@
     <script src="lib/jquery-1.11.1.js"></script>
     <script src="lib/jquery.bpopup.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="lib/flipclock.js"></script>
     <script src="lib/chess.js"></script>
     <script src="lib/chessboard.js"></script>
     <script src="client.js"></script>

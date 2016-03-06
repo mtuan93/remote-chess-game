@@ -1,10 +1,12 @@
 (function() {
     var socket, serverGame;
-    var username, playerColor, otherUser;
+    var username, playerColor, otherUser, penalty;
     var game, board;
     var usersOnline = [];
     var myGames = [];
     socket = io('http://localhost');
+    var clock;
+    var currentTurn;
 
     socket.on('login', function(msg) {
         usersOnline = msg.users;
@@ -79,10 +81,21 @@
         $('#popup-element-request-sent').bPopup().close();
         playerColor = msg.color;
         otherUser = msg.otherUser;
+        penalty = 3;
         initGame(msg.game);
         $('#page-lobby').hide();
         $('#page-game').show();
-        $('#page-game > h2').text('You are compete with ' + otherUser);
+        $('#opponent').text(otherUser);
+        $('#penalty').text(penalty);
+        $('#current-turn').text(getInTurnPlayer());;
+        clock = new FlipClock($('.clock'), 5, {
+            clockFace: 'Counter',
+            autoStart: true,
+            countdown: true
+        });
+        clock.stop = function() {
+            updatePenalty();
+        };
     });
 
     socket.on('request-cancel', function(users) {
@@ -108,6 +121,15 @@
         if (serverGame && msg.gameId === serverGame.id) {
             game.move(msg.move);
             board.position(game.fen());
+            $('#current-turn').text(getInTurnPlayer());;
+            clock = new FlipClock($('.clock'), 5, {
+                clockFace: 'Counter',
+                autoStart: true,
+                countdown: true
+            });
+            clock.stop = function() {
+                updatePenalty();
+            };
         }
     });
 
@@ -180,6 +202,24 @@
         }
     };
 
+    var getInTurnPlayer = function() {
+        var currentPlayer = '';
+        if(game.turn() === 'w') {
+            if(playerColor === 'black') {
+                currentPlayer = otherUser;
+            } else {
+                currentPlayer = username;
+            }
+        } else if(game.turn() === 'b') {
+            if(playerColor === 'white') {
+                currentPlayer = otherUser;
+            } else {
+                currentPlayer = username;
+            }
+        }
+        return currentPlayer;
+    };
+
     var initGame = function(serverGameState) {
         serverGame = serverGameState;
 
@@ -247,6 +287,7 @@
     };
 
     var onDrop = function(source, target) {
+        var that = this;
         var move = game.move({
             from: source,
             to: target,
@@ -261,11 +302,29 @@
                 gameId: serverGame.id,
                 board: game.fen()
             });
+            $('#current-turn').text(getInTurnPlayer());;
+            clock = new FlipClock($('.clock'), 5, {
+                clockFace: 'Counter',
+                autoStart: true,
+                countdown: true
+            });
+            clock.stop = function() {
+                updatePenalty();
+            };
         }
 
     };
     var onSnapEnd = function() {
         board.position(game.fen());
     };
-
+    var updatePenalty = function() {
+        if(getInTurnPlayer() === username) {
+            penalty -= 1;
+            $('#penalty').text(penalty);
+        }
+        if(penalty === 0) {
+            
+        }
+        clock.setTime(60);
+    };
 })();
