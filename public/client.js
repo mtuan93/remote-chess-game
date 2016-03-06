@@ -148,6 +148,9 @@
                         var bpopup = $('#popup-element-request-sent').bPopup();
                         $('#game-request-sent-message').text('Waiting for ' + user + ' to accept or decline your request...');
                         socket.emit('invite', user);
+                        $('#request-sent-cancel').unbind().on('click', function() {
+                            bpopup.close();
+                        });
                     }));
             });
         }
