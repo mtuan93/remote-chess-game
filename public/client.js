@@ -90,6 +90,14 @@
         }
     });
 
+    socket.on('game-end', function(msg) {
+        console.log("game end");
+        console.log("game id", msg.gameId);
+        console.log("server id", serverGame.id);
+        if (serverGame && msg.gameId === serverGame.id) {
+            showEndGamePopup();
+        }
+    });
 
     socket.on('logout', function(msg) {
         removeUser(msg.userId);
@@ -235,8 +243,34 @@
                 board: game.fen()
             });
         }
-
+        checkGameEnd();
     };
+
+    var checkGameEnd = function(){
+        if (game.game_over()){
+            socket.emit('game-end', {
+                gameId: serverGame.id
+            });
+            showEndGamePopup();
+        }
+    };
+
+    var showEndGamePopup = function(){
+        var bpopup = $('#popup-element-game-over').bPopup();
+            if(game.turn() == 'b'){
+                $('#match-winner').text("White");;
+            }
+            if(game.turn() == 'w'){
+                $('#match-winner').text("Black");;
+            }
+            $('#match-winner-ok').unbind().on('click', function() {
+                bpopup.close();
+                $('#page-game').hide();
+                $('#page-lobby').show();
+                socket.emit('login', username);
+        });
+    }
+
     var onSnapEnd = function() {
         board.position(game.fen());
     };

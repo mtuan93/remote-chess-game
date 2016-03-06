@@ -111,6 +111,11 @@ io.on('connection', function(socket) {
         activeGames[msg.gameId].board = msg.board;
         console.log(msg);
     });
+    socket.on('game-end', function(msg) {
+        console.log("game end");
+        console.log("game id", msg.gameId);
+        socket.broadcast.emit('game-end', msg);
+    });
     socket.on('resign', function(userInfo) {
         console.log(userInfo.userId + " resign");
         delete users[userInfo.userId];
