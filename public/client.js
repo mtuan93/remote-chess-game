@@ -75,8 +75,6 @@
 
     socket.on('joingame', function(msg) {
         console.log("joined as game id: " + msg.game.id);
-        $('#popup-element-request').bPopup().close();
-        $('#popup-element-request-sent').bPopup().close();
         playerColor = msg.color;
         otherUser = msg.otherUser;
         initGame(msg.game);
