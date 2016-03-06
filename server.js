@@ -41,12 +41,18 @@ io.on('connection', function(socket) {
         console.log('got an invite from: ' + socket.userId + ' --> ' + opponentId);
         socket.broadcast.emit('leavelobby', socket.userId);
         socket.broadcast.emit('leavelobby', opponentId);
+        socket.broadcast.emit('invite-receive', {
+            sender: socket.userId,
+            userId: opponentId
+        });
+    });
+    socket.on('invite-accept', function(info) {
         var game = {
             id: Math.floor((Math.random() * 100) + 1),
             board: null,
             users: {
-                white: socket.userId,
-                black: opponentId
+                white: info.sender,
+                black: info.userId
             }
         };
         socket.gameId = game.id;

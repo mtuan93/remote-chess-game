@@ -27,6 +27,21 @@
         }
     });
 
+    socket.on('invite-receive', function(info) {
+        if(info.userId === username) {
+            console.log(info.userId + ' receive invitation to play from ' + info.sender);
+            var bpopup = $('#popup-element-request').bPopup();
+            $('#sender').text(info.sender);
+            $('#request-accept').unbind().on('click', function() {
+                socket.emit('invite-accept', info);
+            });
+            $('#request-decline').unbind().on('click', function() {
+                socket.emit('invite-decline', info);
+                bpopup.close();
+            });
+        }
+    });
+
     socket.on('joinlobby', function(msg) {
         addUser(msg);
     });
@@ -46,6 +61,8 @@
 
     socket.on('joingame', function(msg) {
         console.log("joined as game id: " + msg.game.id);
+        $('#popup-element-request').bPopup().close();
+        $('#popup-element-request-sent').bPopup().close();
         playerColor = msg.color;
         otherUser = msg.otherUser;
         initGame(msg.game);
@@ -116,6 +133,8 @@
                 $('#userList').append($('<a href="#" class="row list-group-item">')
                     .text(user)
                     .on('click', function() {
+                        var bpopup = $('#popup-element-request-sent').bPopup();
+                        $('#game-request-sent-message').text('Waiting for ' + user + ' to accept or decline your request...');
                         socket.emit('invite', user);
                     }));
             });
