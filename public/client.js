@@ -1,10 +1,12 @@
 (function() {
     var socket, serverGame;
-    var username, playerColor, otherUser;
+    var username, playerColor, otherUser, penalty;
     var game, board;
     var usersOnline = [];
     var myGames = [];
     socket = io('http://localhost');
+    var clock;
+    var currentTurn;
 
     socket.on('login', function(msg) {
         usersOnline = msg.users;
@@ -27,6 +29,35 @@
         }
     });
 
+    socket.on('invite-receive', function(info) {
+        if(info.userId === username) {
+            console.log(info.userId + ' receive invitation to play from ' + info.sender);
+            var bpopup = $('#popup-element-request').bPopup();
+            $('#sender').text(info.sender);
+            $('#request-accept').unbind().on('click', function() {
+                socket.emit('invite-accept', info);
+            });
+            $('#request-decline').unbind().on('click', function() {
+                socket.emit('invite-decline', info);
+                bpopup.close();
+                socket.emit('login', info.userId);
+            });
+        }
+    });
+
+    socket.on('receive-invite-decline', function(opponentId) {
+        $('#popup-element-request').bPopup().close();
+        $('#popup-element-request-sent').bPopup().close();
+        socket.emit('login', username);
+        $('#page-game').hide();
+        $('#page-lobby').show();
+        var declinePopup = $('#popup-element-request-decline').bPopup();
+        $('#game-request-decline').text(opponentId + ' declined your request to play!');
+        $('#game-request-decline-ok').on('click', function() {
+            declinePopup.close();
+        });
+    });
+
     socket.on('joinlobby', function(msg) {
         addUser(msg);
     });
@@ -46,21 +77,70 @@
 
     socket.on('joingame', function(msg) {
         console.log("joined as game id: " + msg.game.id);
+        $('#popup-element-request').bPopup().close();
+        $('#popup-element-request-sent').bPopup().close();
         playerColor = msg.color;
         otherUser = msg.otherUser;
+        penalty = 3;
         initGame(msg.game);
         $('#page-lobby').hide();
         $('#page-game').show();
-        $('#page-game > h2').text('You are compete with ' + otherUser);
+        $('#opponent').text(otherUser);
+        $('#penalty').text(penalty);
+        $('#current-turn').text(getInTurnPlayer());;
+        clock = new FlipClock($('.clock'), 5, {
+            clockFace: 'Counter',
+            autoStart: true,
+            countdown: true
+        });
+        clock.stop = function() {
+            updatePenalty();
+        };
+    });
+
+    socket.on('request-cancel', function(users) {
+        if(username === users.sender) {
+            socket.emit('login', username);
+            $('#page-login').hide();
+            $('#page-lobby').show();
+        } else if(username === users.userId) {
+            $('#popup-element-request').bPopup().close();
+            $('#popup-element-request-sent').bPopup().close();
+            socket.emit('login', username);
+            $('#page-game').hide();
+            $('#page-lobby').show();
+            var declinePopup = $('#popup-element-request-decline').bPopup();
+            $('#game-request-decline').text(users.sender + ' cancelled the request!');
+            $('#game-request-decline-ok').on('click', function() {
+                declinePopup.close();
+            });
+        }
     });
 
     socket.on('move', function(msg) {
         if (serverGame && msg.gameId === serverGame.id) {
             game.move(msg.move);
             board.position(game.fen());
+            $('#current-turn').text(getInTurnPlayer());;
+            clock = new FlipClock($('.clock'), 5, {
+                clockFace: 'Counter',
+                autoStart: true,
+                countdown: true
+            });
+            clock.stop = function() {
+                updatePenalty();
+            };
         }
     });
 
+    socket.on('game-end', function(msg) {
+        console.log("game end");
+        console.log("game id", msg.gameId);
+        console.log("server id", serverGame.id);
+        if (serverGame && msg.gameId === serverGame.id) {
+            showEndGamePopup();
+        }
+    });
 
     socket.on('logout', function(msg) {
         removeUser(msg.userId);
@@ -82,7 +162,6 @@
 
     $('#login').on('click', function() {
         username = $('#username').val();
-
         if (username.length > 0) {
           socket.emit('validate-username', username);
         }
@@ -127,10 +206,37 @@
                 $('#userList').append($('<a href="#" class="row list-group-item">')
                     .text(user)
                     .on('click', function() {
+                        var bpopup = $('#popup-element-request-sent').bPopup();
+                        $('#game-request-sent-message').text('Waiting for ' + user + ' to accept or decline your request...');
                         socket.emit('invite', user);
+                        $('#request-sent-cancel').unbind().on('click', function() {
+                            bpopup.close();
+                            socket.emit('invite-cancel', {
+                                sender: username,
+                                userId: user
+                            });
+                        });
                     }));
             });
         }
+    };
+
+    var getInTurnPlayer = function() {
+        var currentPlayer = '';
+        if(game.turn() === 'w') {
+            if(playerColor === 'black') {
+                currentPlayer = otherUser;
+            } else {
+                currentPlayer = username;
+            }
+        } else if(game.turn() === 'b') {
+            if(playerColor === 'white') {
+                currentPlayer = otherUser;
+            } else {
+                currentPlayer = username;
+            }
+        }
+        return currentPlayer;
     };
 
     var initGame = function(serverGameState) {
@@ -200,6 +306,7 @@
     };
 
     var onDrop = function(source, target) {
+        var that = this;
         var move = game.move({
             from: source,
             to: target,
@@ -214,11 +321,60 @@
                 gameId: serverGame.id,
                 board: game.fen()
             });
+            $('#current-turn').text(getInTurnPlayer());;
+            clock = new FlipClock($('.clock'), 5, {
+                clockFace: 'Counter',
+                autoStart: true,
+                countdown: true
+            });
+            clock.stop = function() {
+                updatePenalty();
+            };
         }
-
+        checkGameEnd();
     };
+
+    var checkGameEnd = function(){
+        if (game.game_over()){
+            socket.emit('game-end', {
+                gameId: serverGame.id
+            });
+            showEndGamePopup();
+        }
+    };
+
+    var showEndGamePopup = function(){
+        var bpopup = $('#popup-element-game-over').bPopup();
+            if(game.in_draw()){
+                $('#match-winner').text("Game draw!");;
+            }
+            else{
+                if(game.turn() == 'b'){
+                    $('#match-winner').text("White won!");;
+                }
+                if(game.turn() == 'w'){
+                    $('#match-winner').text("Black won!");;
+                }
+            }
+            $('#match-winner-ok').unbind().on('click', function() {
+                bpopup.close();
+                $('#page-game').hide();
+                $('#page-lobby').show();
+                socket.emit('login', username);
+        });
+    }
+
     var onSnapEnd = function() {
         board.position(game.fen());
     };
-
+    var updatePenalty = function() {
+        if(getInTurnPlayer() === username) {
+            penalty -= 1;
+            $('#penalty').text(penalty);
+        }
+        if(penalty === 0) {
+            
+        }
+        clock.setTime(60);
+    };
 })();

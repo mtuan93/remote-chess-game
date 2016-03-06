@@ -149,7 +149,6 @@ describe("Chess Checkin - ", function() {
         client3.on('connect', function(data) {
             client3.emit('login', userName3);
         });
-
         // Set up the new user
         var client1 = io.connect(socketURL, options);
         client1.on('connect', function(data) {
@@ -164,7 +163,6 @@ describe("Chess Checkin - ", function() {
             user.users.length.should.be.equal(2);
             client1.disconnected();
         });
-
         client2.on('joinlobby', function(newUserName) {
             console.log("Test to see if the new user joined the lobby...");
             newUserName.should.be.equal(userName3);

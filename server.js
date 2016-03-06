@@ -37,7 +37,6 @@ io.on('connection', function(socket) {
                 console.log('gameid - ' + gameId);
             });
         }
-        console.log('lobby ' + Object.keys(lobbyUsers));
         socket.emit('login', {
             users: Object.keys(lobbyUsers),
             games: Object.keys(users[userId].games)
@@ -48,14 +47,20 @@ io.on('connection', function(socket) {
     });
     socket.on('invite', function(opponentId) {
         console.log('got an invite from: ' + socket.userId + ' --> ' + opponentId);
-        socket.broadcast.emit('leavelobby', socket.userId);
-        socket.broadcast.emit('leavelobby', opponentId);
+        io.emit('leavelobby', socket.userId);
+        io.emit('leavelobby', opponentId);
+        socket.broadcast.emit('invite-receive', {
+            sender: socket.userId,
+            userId: opponentId
+        });
+    });
+    socket.on('invite-accept', function(info) {
         var game = {
             id: Math.floor((Math.random() * 100) + 1),
             board: null,
             users: {
-                white: socket.userId,
-                black: opponentId
+                white: info.sender,
+                black: info.userId
             }
         };
         socket.gameId = game.id;
@@ -79,6 +84,11 @@ io.on('connection', function(socket) {
             gameId: game.id,
             gameState: game
         });
+    });
+    socket.on('invite-decline', function(info) {
+        lobbyUsers[info.sender].emit('receive-invite-decline', info.userId);
+        delete lobbyUsers[info.sender];
+        delete lobbyUsers[info.userId];
     });
     socket.on('resumegame', function(gameId) {
         console.log('ready to resume game: ' + gameId);
@@ -109,6 +119,11 @@ io.on('connection', function(socket) {
         activeGames[msg.gameId].board = msg.board;
         console.log(msg);
     });
+    socket.on('game-end', function(msg) {
+        console.log("game end");
+        console.log("game id", msg.gameId);
+        socket.broadcast.emit('game-end', msg);
+    });
     socket.on('resign', function(userInfo) {
         console.log(userInfo.userId + " resign");
         delete users[userInfo.userId];
@@ -137,6 +152,13 @@ io.on('connection', function(socket) {
         socket.emit('dashboardlogin', {
             games: activeGames
         });
+    });
+    socket.on('invite-cancel', function(users) {
+        delete lobbyUsers[users.sender];
+        delete lobbyUsers[users.userId];
+        delete users[users.sender];
+        delete users[users.userId];
+        io.emit('request-cancel', users);
     });
 });
 http.listen(port, function() {
