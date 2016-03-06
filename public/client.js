@@ -334,11 +334,16 @@
 
     var showEndGamePopup = function(){
         var bpopup = $('#popup-element-game-over').bPopup();
-            if(game.turn() == 'b'){
-                $('#match-winner').text("White");;
+            if(game.in_draw()){
+                $('#match-winner').text("Game draw!");;
             }
-            if(game.turn() == 'w'){
-                $('#match-winner').text("Black");;
+            else{
+                if(game.turn() == 'b'){
+                    $('#match-winner').text("White won!");;
+                }
+                if(game.turn() == 'w'){
+                    $('#match-winner').text("Black won!");;
+                }
             }
             $('#match-winner-ok').unbind().on('click', function() {
                 bpopup.close();
