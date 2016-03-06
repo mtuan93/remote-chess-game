@@ -28,7 +28,6 @@ io.on('connection', function(socket) {
                 console.log('gameid - ' + gameId);
             });
         }
-        console.log('lobby ' + Object.keys(lobbyUsers));
         socket.emit('login', {
             users: Object.keys(lobbyUsers),
             games: Object.keys(users[userId].games)
@@ -39,8 +38,8 @@ io.on('connection', function(socket) {
     });
     socket.on('invite', function(opponentId) {
         console.log('got an invite from: ' + socket.userId + ' --> ' + opponentId);
-        socket.broadcast.emit('leavelobby', socket.userId);
-        socket.broadcast.emit('leavelobby', opponentId);
+        io.emit('leavelobby', socket.userId);
+        io.emit('leavelobby', opponentId);
         socket.broadcast.emit('invite-receive', {
             sender: socket.userId,
             userId: opponentId
@@ -144,6 +143,13 @@ io.on('connection', function(socket) {
         socket.emit('dashboardlogin', {
             games: activeGames
         });
+    });
+    socket.on('invite-cancel', function(users) {
+        delete lobbyUsers[users.sender];
+        delete lobbyUsers[users.userId];
+        delete users[users.sender];
+        delete users[users.userId];
+        io.emit('request-cancel', users);
     });
 });
 http.listen(port, function() {

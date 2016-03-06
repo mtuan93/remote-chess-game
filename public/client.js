@@ -75,12 +75,33 @@
 
     socket.on('joingame', function(msg) {
         console.log("joined as game id: " + msg.game.id);
+        $('#popup-element-request').bPopup().close();
+        $('#popup-element-request-sent').bPopup().close();
         playerColor = msg.color;
         otherUser = msg.otherUser;
         initGame(msg.game);
         $('#page-lobby').hide();
         $('#page-game').show();
         $('#page-game > h2').text('You are compete with ' + otherUser);
+    });
+
+    socket.on('request-cancel', function(users) {
+        if(username === users.sender) {
+            socket.emit('login', username);
+            $('#page-login').hide();
+            $('#page-lobby').show();
+        } else if(username === users.userId) {
+            $('#popup-element-request').bPopup().close();
+            $('#popup-element-request-sent').bPopup().close();
+            socket.emit('login', username);
+            $('#page-game').hide();
+            $('#page-lobby').show();
+            var declinePopup = $('#popup-element-request-decline').bPopup();
+            $('#game-request-decline').text(users.sender + ' cancelled the request!');
+            $('#game-request-decline-ok').on('click', function() {
+                declinePopup.close();
+            });
+        }
     });
 
     socket.on('move', function(msg) {
@@ -105,7 +126,6 @@
 
     $('#login').on('click', function() {
         username = $('#username').val();
-
         if (username.length > 0) {
             $('#userLabel').text('You are checked in as: ' + username);
             socket.emit('login', username);
@@ -156,6 +176,13 @@
                         var bpopup = $('#popup-element-request-sent').bPopup();
                         $('#game-request-sent-message').text('Waiting for ' + user + ' to accept or decline your request...');
                         socket.emit('invite', user);
+                        $('#request-sent-cancel').unbind().on('click', function() {
+                            bpopup.close();
+                            socket.emit('invite-cancel', {
+                                sender: username,
+                                userId: user
+                            });
+                        });
                     }));
             });
         }
