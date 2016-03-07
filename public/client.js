@@ -6,7 +6,6 @@
     var myGames = [];
     socket = io('http://localhost');
     var clock;
-    var currentTurn;
 
     socket.on('login', function(msg) {
         usersOnline = msg.users;
@@ -32,7 +31,6 @@
 
     socket.on('invite-receive', function(info) {
         if(info.userId === username) {
-            console.log(info.userId + ' receive invitation to play from ' + info.sender);
             var bpopup = $('#popup-element-request').bPopup({modalClose: false, escClose: false});
             bpopup.reposition(100);
             $('#sender').text(info.sender);
@@ -66,20 +64,11 @@
     });
 
     socket.on('leavelobby', function(msg) {
-        console.log(msg + ' leave lobby!');
         removeUser(msg);
     });
 
-    socket.on('gameadd', function(msg) {
-
-    });
-
-    socket.on('gameremove', function(msg) {
-
-    });
 
     socket.on('joingame', function(msg) {
-        console.log("joined as game id: " + msg.game.id);
         $('#popup-element-request').bPopup().close();
         $('#popup-element-request-sent').bPopup().close();
         playerColor = msg.color;
@@ -137,9 +126,6 @@
     });
 
     socket.on('game-end', function(msg) {
-        console.log("game end");
-        console.log("game id", msg.gameId);
-        console.log("server id", serverGame.id);
         if (serverGame && msg.gameId === serverGame.id) {
             showEndGamePopup();
         }
@@ -271,7 +257,7 @@
         board = new ChessBoard('game-board', cfg);
     };
 
-    var onMouseoverSquare = function(square, piece) {
+    var onMouseoverSquare = function(square) {
         // get list of possible moves for this square
         var moves = game.moves({
             square: square,
@@ -301,7 +287,7 @@
         squareEl.css('background', background);
     };
 
-    var onMouseoutSquare = function(square, piece) {
+    var onMouseoutSquare = function() {
         removeGreySquares();
     };
 
@@ -309,7 +295,7 @@
         $('#game-board .square-55d63').css('background', '');
     };
 
-    var onDragStart = function(source, piece, position, orientation) {
+    var onDragStart = function(source, piece) {
         if (game.game_over() === true ||
             (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
             (game.turn() === 'b' && piece.search(/^w/) !== -1) ||
@@ -319,7 +305,6 @@
     };
 
     var onDrop = function(source, target) {
-        var that = this;
         var move = game.move({
             from: source,
             to: target,
@@ -334,7 +319,6 @@
                 gameId: serverGame.id,
                 board: game.fen()
             });
-            console.log('call reset time from on drop');
             socket.emit('reset-time', serverGame.id);
             $('#current-turn').text(getInTurnPlayer());
             checkGameEnd();
@@ -358,10 +342,10 @@
                 $('#match-winner').text("Game draw!");;
             }
             else{
-                if(game.turn() == 'b'){
+                if(game.turn() === 'b'){
                     $('#match-winner').text("White won!");;
                 }
-                if(game.turn() == 'w'){
+                if(game.turn() === 'w'){
                     $('#match-winner').text("Black won!");;
                 }
             }
