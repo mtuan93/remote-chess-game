@@ -135,9 +135,78 @@ describe("Enter the Chess Game Screen", function() {
         client1.emit('invite', u2);
       });
 
+      client2.on('invite-receive', function(inviteInfo) {
+        client2.emit('invite-accept', { userId: u2, sender: u1 });
+      });
+
+      // ensure that both users are added to a game with each other
+      client1.on('joingame', function(gameInfo) {
+        should.be.equal(gameInfo.otherUser, u2);
+      });
+      client2.on('joingame', function(gameInfo) {
+        should.be.equal(gameInfo.otherUser, u1);
+      });
 
     });
 });
+
+
+describe("Display What Side May Move", function() {
+  it('TEST: Ensure that the system shows whose move it currently is', function() {
+      var client1 = io.connect(socketURL, options);
+      var client2 = io.connect(socketURL, options);
+      client1.on('connect', function(data) {
+        client1.emit('login', userName1);
+      });
+      client2.on('connect', function(data) {
+        client2.emit('login', userName2);
+      });
+
+      client1.on('login', function(gameData) {
+        client1.emit('invite', u2);
+      });
+
+      client2.on('invite-receive', function(inviteInfo) {
+        client2.emit('invite-accept', { userId: u2, sender: u1 });
+      });
+
+      /// TODO: need to test that the game shows whose move it is
+
+    });
+});
+
+describe("Display a Move Timer", function() {
+  it('TEST: Ensure that a move timer is displayed to the users in a chess ' 
+    + 'game', function(done) {
+
+      /// TODO: test if a timer is being displayed to the users
+  });
+});
+
+
+describe("Timer Reset", function() {
+  it('TEST: Ensure that the timer is reset after each player moves' function(done) {
+
+    /// TODO: test to make sure that the timer is reset
+  });
+});
+
+
+describe("Timer Warning", function() {
+  it('TEST: Ensure that the user knows how many time penalties are left', function(done) {
+    /// TODO: test to make sure the client displays how many penalties are left
+  });
+});
+
+
+describe("Automatic Forfeit", function() {
+  it('TEST: Ensure that once a user allows the timer to run out three times '
+    + 'that the user automatically forfeits', function(done) {
+      /// TODO: make sure that a user automatically forfeits once they allow
+      //  the timer to go down three times
+  });
+});
+
 
 describe("Chess Checkin - ", function() {
     /* Test 1 - A Single User */
