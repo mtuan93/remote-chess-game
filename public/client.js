@@ -6,6 +6,7 @@
     var myGames = [];
     socket = io('http://localhost');
     var clock;
+    var currentTurn;
 
     socket.on('login', function(msg) {
         usersOnline = msg.users;
@@ -105,14 +106,14 @@
     });
 
     socket.on('request-cancel', function(users) {
-        if (username === users.sender) {
+        if(username === users.sender) {
             socket.emit('login', username);
             $('#page-login').hide();
             $('#page-lobby').show();
-        } else if (username === users.userId) {
+        } else if(username === users.userId) {
             $('#popup-element-request').bPopup().close();
             $('#popup-element-request-sent').bPopup().close();
-            socket.emit('           login', username);
+            socket.emit('login', username);
             $('#page-game').hide();
             $('#page-lobby').show();
             var declinePopup = $('#popup-element-request-decline').bPopup();
@@ -144,6 +145,18 @@
         removeUser(msg.userId);
     });
 
+    socket.on('valid-username', function(isValid) {
+      if(isValid){
+        $('#userLabel').text('You are checked in as: ' + username);
+        socket.emit('login', username);
+        $('#page-login').hide();
+        $('#page-lobby').show();
+      } else {
+        var bpopup = $('#popup-element-duplicate-username').bPopup();
+        $('#popup-dup-ok').unbind().on('click', function() {
+          bpopup.close();
+        });
+      });
     socket.on('reset-time', function(gameInfo) {
         if(serverGame && serverGame.id === gameInfo.gameId && clock) {
             clock.setTime(gameInfo.time);
@@ -154,10 +167,7 @@
     $('#login').on('click', function() {
         username = $('#username').val();
         if (username.length > 0) {
-            $('#userLabel').text('You are checked in as: ' + username);
-            socket.emit('login', username);
-            $('#page-login').hide();
-            $('#page-lobby').show();
+          socket.emit('validate-username', username);
         }
     });
 
@@ -334,11 +344,16 @@
     var showEndGamePopup = function(){
         clock = null;
         var bpopup = $('#popup-element-game-over').bPopup();
-            if(game.turn() == 'b'){
-                $('#match-winner').text("White");
+            if(game.in_draw()){
+                $('#match-winner').text("Game draw!");;
             }
-            if(game.turn() == 'w'){
-                $('#match-winner').text("Black");
+            else{
+                if(game.turn() == 'b'){
+                    $('#match-winner').text("White won!");;
+                }
+                if(game.turn() == 'w'){
+                    $('#match-winner').text("Black won!");;
+                }
             }
             $('#match-winner-ok').unbind().on('click', function() {
                 bpopup.close();

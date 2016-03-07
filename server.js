@@ -13,6 +13,15 @@ app.get('/', function(req, res) {
 });
 io.on('connection', function(socket) {
     console.log('new connection ' + socket);
+
+    socket.on('validate-username', function(username) {
+      if(username in lobbyUsers) {
+        socket.emit('valid-username', false);
+      } else {
+        socket.emit('valid-username', true);
+      }
+    });
+
     socket.on('login', function(userId) {
         console.log(userId + ' joining lobby');
         socket.userId = userId;
