@@ -21,7 +21,8 @@
             socket.emit('login', username);
             $('#page-game').hide();
             $('#page-lobby').show();
-            var resignPopup = $('#popup-element-resign-received').bPopup();
+            var resignPopup = $('#popup-element-resign-received').bPopup({modalClose: false, escClose: false});
+            resignPopup.reposition(100);
             $('#game-resign-message').text(userInfo.opponentId + ' has resigned the game, you won!');
             $('#game-resign-received-ok').on('click', function() {
                 resignPopup.close();
@@ -32,7 +33,8 @@
     socket.on('invite-receive', function(info) {
         if(info.userId === username) {
             console.log(info.userId + ' receive invitation to play from ' + info.sender);
-            var bpopup = $('#popup-element-request').bPopup();
+            var bpopup = $('#popup-element-request').bPopup({modalClose: false, escClose: false});
+            bpopup.reposition(100);
             $('#sender').text(info.sender);
             $('#request-accept').unbind().on('click', function() {
                 socket.emit('invite-accept', info);
@@ -51,7 +53,8 @@
         socket.emit('login', username);
         $('#page-game').hide();
         $('#page-lobby').show();
-        var declinePopup = $('#popup-element-request-decline').bPopup();
+        var declinePopup = $('#popup-element-request-decline').bPopup({modalClose: false, escClose: false});
+        declinePopup.reposition(100);
         $('#game-request-decline').text(opponentId + ' declined your request to play!');
         $('#game-request-decline-ok').on('click', function() {
             declinePopup.close();
@@ -87,15 +90,22 @@
         $('#page-game').show();
         $('#opponent').text(otherUser);
         $('#penalty').text(penalty);
-        $('#current-turn').text(getInTurnPlayer());;
-        clock = new FlipClock($('.clock'), 5, {
-            clockFace: 'Counter',
-            autoStart: true,
-            countdown: true
-        });
-        clock.stop = function() {
-            updatePenalty();
-        };
+        $('#current-turn').text(getInTurnPlayer());
+    });
+
+    socket.on('start-time', function(gameInfo) {
+        if (serverGame && gameInfo.gameId === serverGame.id) {
+            clock = $('.clock').FlipClock(gameInfo.time, {
+                clockFace: 'Counter',
+                autoStart: true,
+                countdown: true,
+                callbacks: {
+                    stop: function() {
+                        updatePenalty();
+                    }
+                }
+            });
+        }
     });
 
     socket.on('request-cancel', function(users) {
@@ -109,7 +119,8 @@
             socket.emit('login', username);
             $('#page-game').hide();
             $('#page-lobby').show();
-            var declinePopup = $('#popup-element-request-decline').bPopup();
+            var declinePopup = $('#popup-element-request-decline').bPopup({modalClose: false, escClose: false});
+            declinePopup.reposition(100);
             $('#game-request-decline').text(users.sender + ' cancelled the request!');
             $('#game-request-decline-ok').on('click', function() {
                 declinePopup.close();
@@ -121,15 +132,7 @@
         if (serverGame && msg.gameId === serverGame.id) {
             game.move(msg.move);
             board.position(game.fen());
-            $('#current-turn').text(getInTurnPlayer());;
-            clock = new FlipClock($('.clock'), 5, {
-                clockFace: 'Counter',
-                autoStart: true,
-                countdown: true
-            });
-            clock.stop = function() {
-                updatePenalty();
-            };
+            $('#current-turn').text(getInTurnPlayer());
         }
     });
 
@@ -147,17 +150,25 @@
     });
 
     socket.on('valid-username', function(isValid) {
-      if(isValid){
+      if(isValid) {
         $('#userLabel').text('You are checked in as: ' + username);
         socket.emit('login', username);
         $('#page-login').hide();
         $('#page-lobby').show();
       } else {
-        var bpopup = $('#popup-element-duplicate-username').bPopup();
+        var bpopup = $('#popup-element-duplicate-username').bPopup({modalClose: false, escClose: false});
+        bpopup.reposition(100);
         $('#popup-dup-ok').unbind().on('click', function() {
           bpopup.close();
+          $('#username').val('');
         });
       }
+    });
+    socket.on('reset-time', function(gameInfo) {
+        if(serverGame && serverGame.id === gameInfo.gameId && clock) {
+            clock.setTime(gameInfo.time);
+            clock.start();
+        }
     });
 
     $('#login').on('click', function() {
@@ -168,7 +179,8 @@
     });
 
     $('#game-resign').click(function() {
-        var bpopup = $('#popup-element-forfeit').bPopup();
+        var bpopup = $('#popup-element-forfeit').bPopup({modalClose: false, escClose: false});
+        bpopup.reposition(100);
         $('#resign-accept').unbind().on('click', function() {
             bpopup.close();
             socket.emit('resign', {
@@ -206,7 +218,8 @@
                 $('#userList').append($('<a href="#" class="row list-group-item">')
                     .text(user)
                     .on('click', function() {
-                        var bpopup = $('#popup-element-request-sent').bPopup();
+                        var bpopup = $('#popup-element-request-sent').bPopup({modalClose: false, escClose: false});
+                        bpopup.reposition(100);
                         $('#game-request-sent-message').text('Waiting for ' + user + ' to accept or decline your request...');
                         socket.emit('invite', user);
                         $('#request-sent-cancel').unbind().on('click', function() {
@@ -321,17 +334,11 @@
                 gameId: serverGame.id,
                 board: game.fen()
             });
-            $('#current-turn').text(getInTurnPlayer());;
-            clock = new FlipClock($('.clock'), 5, {
-                clockFace: 'Counter',
-                autoStart: true,
-                countdown: true
-            });
-            clock.stop = function() {
-                updatePenalty();
-            };
+            console.log('call reset time from on drop');
+            socket.emit('reset-time', serverGame.id);
+            $('#current-turn').text(getInTurnPlayer());
+            checkGameEnd();
         }
-        checkGameEnd();
     };
 
     var checkGameEnd = function(){
@@ -344,7 +351,9 @@
     };
 
     var showEndGamePopup = function(){
-        var bpopup = $('#popup-element-game-over').bPopup();
+        clock = null;
+        var bpopup = $('#popup-element-game-over').bPopup({modalClose: false, escClose: false});
+        bpopup.reposition(100);
             if(game.in_draw()){
                 $('#match-winner').text("Game draw!");;
             }
@@ -362,7 +371,7 @@
                 $('#page-lobby').show();
                 socket.emit('login', username);
         });
-    }
+    };
 
     var onSnapEnd = function() {
         board.position(game.fen());
@@ -371,10 +380,13 @@
         if(getInTurnPlayer() === username) {
             penalty -= 1;
             $('#penalty').text(penalty);
+            socket.emit('reset-time', serverGame.id);
         }
         if(penalty === 0) {
-            
+            socket.emit('game-end', {
+                gameId: serverGame.id
+            });
+            showEndGamePopup();
         }
-        clock.setTime(60);
     };
 })();

@@ -32,16 +32,16 @@
                 </div>
             </div>
             <div class="page game" id='page-game'>
-                <h1>You are compete with <span id="opponent"></span></h1>
-                <h1>Current Turn: <span id="current-turn"></span></h1>
-                <h1>Number of Allowed Penalties Left: <span id="penalty"></span></h1>
-                <div class="row">
-                  <button class="btn btn-danger" id='game-resign'>Forfeit</button>
-                  <div class="clock" style="margin:2em;"></div>
+                <h4>You are compete with <span class="label label-success" id="opponent"></span></h4>
+                <h4>Current Turn: <span class="label label-primary" id="current-turn"></span></h4>
+                <h4>Number of Allowed Penalties Left: <span class="label label-danger" id="penalty"></span></h4>
+                <button class="btn btn-danger" id='game-resign'>Forfeit</button>
+                <div class="my-container">
+                  <div class="clock"></div>
                 </div>
                 <div class="popup-element" id="popup-element-forfeit">
                   <center>
-                    <a class="b-close">x</a>Are you sure that you want to forfeit the game?
+                      Are you sure that you want to forfeit the game?
                       </br>
                       </br>
                       <button class="btn btn-primary" id='resign-accept'>Accept</button>
@@ -60,7 +60,7 @@
 
                 <div class="popup-element" id="popup-element-request">
                   <center>
-                    <a class="b-close">x</a><span id="sender"></span> wants to challenge you for a match!
+                      <span id="sender"></span> wants to challenge you for a match!
                       </br>
                       </br>
                       <button class="btn btn-primary" id='request-accept'>Accept</button>
@@ -69,7 +69,7 @@
                 </div>
                 <div class="popup-element" id="popup-element-game-over">
                   <center>
-                    <a class="b-close">x</a>Game Over <br/><span id="match-winner"></span>
+                      Game Over <br/><span id="match-winner"></span>
                       </br>
                       </br>
                       <button class="btn btn-primary" id='match-winner-ok'>Ok</button>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="popup-element" id="popup-element-request-sent">
                   <center>
-                    <a class="b-close">x</a><span id="game-request-sent-message"></span>
+                    <span id="game-request-sent-message"></span>
                     </br>
                     </br>
                     <button class="btn btn-primary" id="request-sent-cancel">Cancel request</button>
@@ -85,7 +85,7 @@
                 </div>
                 <div class="popup-element" id="popup-element-resign-received">
                   <center>
-                    <a class="b-close">x</a><span id="game-resign-message"></span>
+                      <span id="game-resign-message"></span>
                       </br>
                       </br>
                       <button class="btn btn-primary" id='game-resign-received-ok'>Ok</button>
@@ -93,13 +93,14 @@
                 </div>
                 <div class="popup-element" id="popup-element-request-decline">
                   <center>
-                    <a class="b-close">x</a><span id="game-request-decline"></span>
+                      <span id="game-request-decline"></span>
                       </br>
                       </br>
                       <button class="btn btn-primary" id='game-request-decline-ok'>Ok</button>
                   </center>
                 </div>
           <div id='game-board' style="width: 400px; margin: 0 auto"></div>
+        </div>
         </div>
       </div>
     </div>
