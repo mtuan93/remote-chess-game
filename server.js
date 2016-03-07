@@ -122,7 +122,6 @@ io.on('connection', function(socket) {
     socket.on('move', function(msg) {
         io.emit('move', msg);
         activeGames[msg.gameId].board = msg.board;
-        console.log(msg);
     });
     socket.on('game-end', function(msg) {
         console.log("game end");
