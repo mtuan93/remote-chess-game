@@ -7,6 +7,7 @@ var port = 3000;
 var lobbyUsers = {};
 var users = {};
 var activeGames = {};
+var currentTime = 60;
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
@@ -75,6 +76,10 @@ io.on('connection', function(socket) {
             gameId: game.id,
             gameState: game
         });
+        io.emit('start-time', {
+            gameId: socket.gameId,
+            time: currentTime
+        });
     });
     socket.on('invite-decline', function(info) {
         lobbyUsers[info.sender].emit('receive-invite-decline', info.userId);
@@ -106,14 +111,14 @@ io.on('connection', function(socket) {
         }
     });
     socket.on('move', function(msg) {
-        socket.broadcast.emit('move', msg);
+        io.emit('move', msg);
         activeGames[msg.gameId].board = msg.board;
         console.log(msg);
     });
     socket.on('game-end', function(msg) {
         console.log("game end");
         console.log("game id", msg.gameId);
-        socket.broadcast.emit('game-end', msg);
+        io.emit('game-end', msg);
     });
     socket.on('resign', function(userInfo) {
         console.log(userInfo.userId + " resign");
@@ -150,6 +155,13 @@ io.on('connection', function(socket) {
         delete users[users.sender];
         delete users[users.userId];
         io.emit('request-cancel', users);
+    });
+    socket.on('reset-time', function(gameId) {
+        currentTime = 60;
+        io.emit('reset-time', {
+            gameId: gameId,
+            time: currentTime
+        });
     });
 });
 http.listen(port, function() {

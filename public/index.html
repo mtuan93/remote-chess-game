@@ -32,12 +32,12 @@
                 </div>
             </div>
             <div class="page game" id='page-game'>
-                <h1>You are compete with <span id="opponent"></span></h1>
-                <h1>Current Turn: <span id="current-turn"></span></h1>
-                <h1>Number of Allowed Penalties Left: <span id="penalty"></span></h1>
-                <div class="row">
-                  <button class="btn btn-danger" id='game-resign'>Forfeit</button>
-                  <div class="clock" style="margin:2em;"></div>
+                <h4>You are compete with <span class="label label-success" id="opponent"></span></h4>
+                <h4>Current Turn: <span class="label label-primary" id="current-turn"></span></h4>
+                <h4>Number of Allowed Penalties Left: <span class="label label-danger" id="penalty"></span></h4>
+                <button class="btn btn-danger" id='game-resign'>Forfeit</button>
+                <div class="my-container">
+                  <div class="clock"></div>
                 </div>
                 <div class="popup-element" id="popup-element-forfeit">
                   <center>
@@ -90,6 +90,7 @@
                   </center>
                 </div>
           <div id='game-board' style="width: 400px; margin: 0 auto"></div>
+        </div>
         </div>
       </div>
     </div>
