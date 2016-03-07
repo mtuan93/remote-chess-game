@@ -22,6 +22,7 @@
             $('#page-game').hide();
             $('#page-lobby').show();
             var resignPopup = $('#popup-element-resign-received').bPopup({modalClose: false, escClose: false});
+            resignPopup.reposition(100);
             $('#game-resign-message').text(userInfo.opponentId + ' has resigned the game, you won!');
             $('#game-resign-received-ok').on('click', function() {
                 resignPopup.close();
@@ -33,6 +34,7 @@
         if(info.userId === username) {
             console.log(info.userId + ' receive invitation to play from ' + info.sender);
             var bpopup = $('#popup-element-request').bPopup({modalClose: false, escClose: false});
+            bpopup.reposition(100);
             $('#sender').text(info.sender);
             $('#request-accept').unbind().on('click', function() {
                 socket.emit('invite-accept', info);
@@ -52,6 +54,7 @@
         $('#page-game').hide();
         $('#page-lobby').show();
         var declinePopup = $('#popup-element-request-decline').bPopup({modalClose: false, escClose: false});
+        declinePopup.reposition(100);
         $('#game-request-decline').text(opponentId + ' declined your request to play!');
         $('#game-request-decline-ok').on('click', function() {
             declinePopup.close();
@@ -117,6 +120,7 @@
             $('#page-game').hide();
             $('#page-lobby').show();
             var declinePopup = $('#popup-element-request-decline').bPopup({modalClose: false, escClose: false});
+            declinePopup.reposition(100);
             $('#game-request-decline').text(users.sender + ' cancelled the request!');
             $('#game-request-decline-ok').on('click', function() {
                 declinePopup.close();
@@ -153,6 +157,7 @@
         $('#page-lobby').show();
       } else {
         var bpopup = $('#popup-element-duplicate-username').bPopup({modalClose: false, escClose: false});
+        bpopup.reposition(100);
         $('#popup-dup-ok').unbind().on('click', function() {
           bpopup.close();
           $('#username').val('');
@@ -175,6 +180,7 @@
 
     $('#game-resign').click(function() {
         var bpopup = $('#popup-element-forfeit').bPopup({modalClose: false, escClose: false});
+        bpopup.reposition(100);
         $('#resign-accept').unbind().on('click', function() {
             bpopup.close();
             socket.emit('resign', {
@@ -213,6 +219,7 @@
                     .text(user)
                     .on('click', function() {
                         var bpopup = $('#popup-element-request-sent').bPopup({modalClose: false, escClose: false});
+                        bpopup.reposition(100);
                         $('#game-request-sent-message').text('Waiting for ' + user + ' to accept or decline your request...');
                         socket.emit('invite', user);
                         $('#request-sent-cancel').unbind().on('click', function() {
@@ -346,6 +353,7 @@
     var showEndGamePopup = function(){
         clock = null;
         var bpopup = $('#popup-element-game-over').bPopup({modalClose: false, escClose: false});
+        bpopup.reposition(100);
             if(game.in_draw()){
                 $('#match-winner').text("Game draw!");;
             }
