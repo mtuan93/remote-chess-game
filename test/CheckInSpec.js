@@ -180,14 +180,16 @@ describe("Display a Move Timer", function() {
     + 'game', function(done) {
 
       /// TODO: test if a timer is being displayed to the users
+      done();
   });
 });
 
 
 describe("Timer Reset", function() {
-  it('TEST: Ensure that the timer is reset after each player moves' function(done) {
+  it('TEST: Ensure that the timer is reset after each player moves', function(done) {
 
     /// TODO: test to make sure that the timer is reset
+    done();
   });
 });
 
@@ -195,6 +197,7 @@ describe("Timer Reset", function() {
 describe("Timer Warning", function() {
   it('TEST: Ensure that the user knows how many time penalties are left', function(done) {
     /// TODO: test to make sure the client displays how many penalties are left
+    done();
   });
 });
 
@@ -204,6 +207,7 @@ describe("Automatic Forfeit", function() {
     + 'that the user automatically forfeits', function(done) {
       /// TODO: make sure that a user automatically forfeits once they allow
       //  the timer to go down three times
+      done();
   });
 });
 
