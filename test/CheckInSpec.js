@@ -113,7 +113,9 @@ describe("Send and Receive Match Request", function() {
         client1.emit('invite', u2);
       });
 
-      /// TODO: Ensure that client2 receives the request
+      client2.on('invite-receive', function(inviteInfo) {
+        should.equal(inviteInfo.sender, u1);
+      });
     });
 });
 
